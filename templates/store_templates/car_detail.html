@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<br>
+      <h3>Car Details</h3>
+      <hr>
+      <span class="text-info">Name: </span> <span>{{ car.name }}</span>
+      <br>
+      <span class="text-info">Manufacturer: </span><span>{{ car.manufacturer }}</span>
+      <br>
+      <span class="text-info">Manufacture Date: </span><span>{{ car.manufacture_date }}</span>
+      <br>
+      {% if not reviews %}
+            <hr>
+            <h3>No reviews? Write the first.</h3>
+      {% else %}
+            <span class="text-info">Overall Rating: </span><span class="badge badge-primary badge-pill">{{ car_rating }}</span>
+            <br>
+            <hr>
+            <h3>Review Comments</h3>
+            <ul>
+            {% for review in reviews %}
+                  <li class="list-group-item">
+                        <span class="text-info">Review comment: </span> <span>{{ review.content }}</span>
+                        <br>
+                        <span class="text-info">Created on: </span><span>{{ review.date_created }}</span>
+                        <br>
+                        <span class="text-info">Modified on: </span><span>{{ review.date_edited }}</span>
+                        <br>
+                        <span class="text-info">Rating: </span><span class="badge badge-secondary badge-pill">{{ review.rating }}</span>
+                        <br>
+                        <span class="text-info">Creator: </span><span>{{ review.creator.username }}</span>
+                        <br>
+                  </li>
+            {% endfor %}
+            </ul>
+      {% endif %}
+{% endblock %}
