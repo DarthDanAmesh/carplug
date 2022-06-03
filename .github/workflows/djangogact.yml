@@ -1,4 +1,4 @@
-name: Django CI
+name: Lint Code Base
 
 on:
   push:
@@ -16,11 +16,8 @@ jobs:
         python-version: [3.7, 3.8, 3.9]
 
     steps:
+    - name: checkout code
     - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Run tests
-      run: |
-        python manage.py test
+
+    - name: Lint Code Base
+      uses: github/super-linter@v4
