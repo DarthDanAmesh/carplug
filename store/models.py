@@ -49,6 +49,7 @@ class Car(models.Model):
     fuel_type = models.CharField(max_length=20, verbose_name="Fuel option.")
     mileage = models.CharField(max_length=20, verbose_name="total mileage")
     price = models.IntegerField(verbose_name="current price")
+    image = models.ImageField(upload_to='store/%Y/%m/%d', blank=True)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE)
     importers = models.ManyToManyField \
         (Importer, through="CarImporter")
