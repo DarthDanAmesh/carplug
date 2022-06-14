@@ -1,6 +1,7 @@
 {% extends 'store_templates/bass.html' %}
-{% block content %}
 
+{% block content %}
+{%load static%}
 <div class="container">
   <h2>New Listings</h2>
   <div id="myCarousel" class="carousel slide" data-ride="carousel">
@@ -15,7 +16,7 @@
     <div class="carousel-inner">
 
       <div class="item active">
-        <img src="la.jpg" alt="Los Angeles" style="width:100%;">
+       <img src="{% static 'img/BMW M3 2018.jpeg' %}" alt="Chicago" style="width:100%;">
         <div class="carousel-caption">
           <h3>Los Angeles</h3>
           <p>LA is always so much fun!</p>
@@ -23,7 +24,7 @@
       </div>
 
       <div class="item">
-        <img src="chicago.jpg" alt="Chicago" style="width:100%;">
+        <img src="{% static 'img/Mercedes E320 CDI 2009.jpeg' %}" alt="Chicago" style="width:100%;">
         <div class="carousel-caption">
           <h3>Chicago</h3>
           <p>Thank you, Chicago!</p>
@@ -31,7 +32,8 @@
       </div>
 
       <div class="item">
-        <img src="ny.jpg" alt="New York" style="width:100%;">
+
+        <img src="{% static 'img/Nissan Juke 2018.jpeg' %}" alt="New York" style="width:100%;">
         <div class="carousel-caption">
           <h3>New York</h3>
           <p>We love the Big Apple!</p>
@@ -51,31 +53,4 @@
     </a>
   </div>
 </div>
-
-    <ul class="list-group">
-    {% for item in car_list %}
-    <li class="list-group-item">
-    <span class="text-info">Name: </span><span>{{item.car.name}}</span>
-    <br>
-    <span class="text-info">Brand: </span><span>{{item.car.manufacturer}}</span>
-    <br>
-    <span class="text-info">Manufacture Date: </span><span>{{item.car.manufacture_date}}</span>
-    <br>
-    <span class="text-info">Mileage: </span><span>{{item.car.mileage}}</span>
-    <br>
-    <span class="text-info">Current Price: </span><span>{{item.car.price}}</span>
-    <br>
-    <br>
-    <span class="text-info">Car Rating: </span><span>{{item.car_rating}}</span>
-    <br>
-    <span class="text-info">Car Reviews: </span><span>{{item.number_of_reviews}}</span>
-    <br>
-        {% if item.car_rating is null %}
-              <span>Rate this car?</span>
-              <br>
-        {% endif %}
-    <a class="btn btn-primary btn-sm active" role="button" href="{% url 'car_detail' item.car.pk %}">Views</a>
-    </li>
-    {% endfor %}
-</ul>
 {% endblock %}

@@ -21,9 +21,10 @@ def car_list(request):
             car_rating = None
             number_of_reviews = 0
         all_cars.append({'car': car, 'car_rating': car_rating, 'number_of_reviews': number_of_reviews})
-        context = {
-            'car_list': all_cars}
-    return render(request, 'store_templates/car_list.html', context)
+    '''Returns the context, eg. empty or full list of cars regardless of else statement being triggered'''
+    context = {
+        'car_list': all_cars}
+    return render(request, 'store_templates/car_lisy.html', context)
 
 
 '''book detail endpoint'''
@@ -42,12 +43,27 @@ def car_detail(request, pk):
             # map to list of reviews
             'car_rev': reviews
         }
-
     else:
-        # if no reviews are present
         context = {
             'car': car_det,
             'car_rating': None,
             'car_rev': None
         }
-    return render(request, 'store_templates/car_detail.html', context)
+        # if no reviews are present
+    '''Returns the context, eg. empty or full list of cars regardless of else statement being triggered'''
+
+    cont = context
+    return render(request, 'store_templates/car_detail.html', cont)
+
+
+'''
+def carousel_list(request):
+    for item in reviews:
+        if item.available==True:
+        
+        pos1 = Car.objects.all()[:1]
+    pos2 = Car.objects.all()[:2]
+    pos3 = Car.objects.all()[:3]
+    context = {'slider1': pos1, 'slider2': pos2, 'slider3': pos3}
+    return render(request, 'store_templates/car_lis.html', context)
+'''
