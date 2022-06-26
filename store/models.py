@@ -1,5 +1,9 @@
-from django.db import models
+import sys
+from io import BytesIO
+from PIL import Image
 from django.contrib import auth
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.db import models
 
 
 # Create your models here.
@@ -32,7 +36,7 @@ class Car(models.Model):
     manufacture_date = models.DateField(verbose_name="Date the car was manufactured.")
     fuel_type = models.CharField(max_length=20, verbose_name="Fuel option.")
     mileage = models.CharField(max_length=20, verbose_name="total mileage")
-    price = models.IntegerField(verbose_name="current price")
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="current price")
     available = models.BooleanField(default=True)
     image = models.ImageField(upload_to='store/%Y/%m/%d', blank=True)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE)
@@ -41,8 +45,22 @@ class Car(models.Model):
     class Meta:
         ordering = ('available',)
 
+    def save(self, **kwargs):
+        # Opening the uploaded image
+        img = Image.open(self.image)
+        output = BytesIO()
+        # resize
+        resized = img.resize((150, 150))
+
+        resized.save(output, format="JPEG", quality=90)
+        # change the imagefield value to be the newly modified image value
+        self.image = InMemoryUploadedFile(output, 'ImageField', "%s.jpg" % self.image.name.split('.')[0], 'image'
+                                                                                                          '/jpeg',
+                                          sys.getsizeof(output), None)
+        super(Car, self).save()
+
     def __str__(self):
-        return "{} ({})".format(self.name, self.manufacture_date)
+        return "{} ({})".format(self.name, self.manufacture_date, self.price)
 
 
 class CarImporter(models.Model):

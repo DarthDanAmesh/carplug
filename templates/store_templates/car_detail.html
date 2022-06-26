@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'store_templates/bass.html' %}
 {% block content %}
 <br>
       <h3>Car Details</h3>
@@ -9,6 +9,12 @@
       <br>
       <span class="text-info">Manufacture Date: </span><span>{{ car.manufacture_date }}</span>
       <br>
+      <span class="text-info">Price: KES. </span><span>{{ car.price }}</span>
+      <br>
+      <span class="text-info">Mileage: </span><span>{{ car.mileage }}</span>
+      <br>
+      <div class="bg-light"><img class="img-fluid mx-auto d-block" width="200px" alt="Responsive image"
+                  src="{{ car.image.url }}"> </div>
       {% if not reviews %}
             <hr>
             <h3>No reviews? Write the first.</h3>
