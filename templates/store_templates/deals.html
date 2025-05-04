@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Special Car Deals - CarZone{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Hot Deals</h1>
+            <p class="lead text-muted">Limited-time offers on our best vehicles</p>
+        </div>
+    </div>
+
+    {% if deals %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for car in deals %}
+        <div class="col">
+            <div class="card h-100 deal-card shadow-sm">
+                {% if car.discount_percentage %}
+                <span class="badge bg-danger position-absolute top-0 end-0 m-2">
+                    {{ car.discount_percentage }}% OFF
+                </span>
+                {% endif %}
+                
+                <img src="{{ car.image.url }}" class="card-img-top" alt="{{ car.name }}" style="height: 200px; object-fit: cover;">
+                
+                <div class="card-body">
+                    <h5 class="card-title">{{ car.name }}</h5>
+                    <p class="text-muted">{{ car.manufacturer.name }}</p>
+                    
+                    <div class="mb-3">
+                        {% if car.avg_rating %}
+                            {% with stars=car.avg_rating|floatformat:0 %}
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= stars %}
+                                        <i class="fas fa-star text-warning"></i>
+                                    {% else %}
+                                        <i class="far fa-star text-warning"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <small class="text-muted">({{ car.review_set.count }} reviews)</small>
+                            {% endwith %}
+                        {% else %}
+                            <span class="text-muted">No reviews yet</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            {% if car.discount_price %}
+                                <span class="text-danger fw-bold h4">${{ car.discount_price }}</span>
+                                <span class="text-decoration-line-through text-muted ms-2">${{ car.price }}</span>
+                            {% else %}
+                                <span class="fw-bold h4">${{ car.price }}</span>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'car_detail' car.id %}" class="btn btn-primary">
+                            View Deal <i class="fas fa-chevron-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-transparent">
+                    <small class="text-muted">
+                        <i class="fas fa-road me-1"></i> {{ car.mileage }} miles |
+                        <i class="fas fa-calendar-alt me-1"></i> {{ car.year }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-12 text-center py-5">
+            <div class="alert alert-info">
+                <h4 class="alert-heading">No Special Deals Available</h4>
+                <p>Check back later for our latest offers!</p>
+                <a href="{% url 'car_list' %}" class="btn btn-outline-primary mt-2">
+                    Browse All Vehicles
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

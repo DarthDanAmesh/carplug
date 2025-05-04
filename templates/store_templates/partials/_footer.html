@@ -1,0 +1,53 @@
+{% load static %}
+<footer class="footer bg-dark text-light mt-5">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-3">
+                <h5>CarZone</h5>
+                <p>Find your dream car at the best prices. We offer a wide selection of new and used vehicles.</p>
+            </div>
+            <div class="col-md-3">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'home' %}" class="text-light">Home</a></li>
+                    <li><a href="{% url 'about' %}" class="text-light">About Us</a></li>
+                    <li><a href="{% url 'contact' %}" class="text-light">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>Support</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'faq' %}" class="text-light">FAQ</a></li>
+                    <li><a href="{% url 'shipping_policy' %}" class="text-light">Shipping Policy</a></li>
+                    <li><a href="{% url 'return_policy' %}" class="text-light">Return Policy</a></li>
+                    <li><a href="{% url 'privacy_policy' %}" class="text-light">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>Contact Us</h5>
+                <ul class="list-unstyled">
+                    <li><i class="fa fa-envelope"></i> <a href="mailto:info@carzone.com" class="text-light">info@carzone.com</a></li>
+                    <li><i class="fa fa-phone"></i> <a href="tel:+254776655443" class="text-light">+254 77 66 55 443</a></li>
+                </ul>
+                <div class="social-icons mt-3">
+                    <a href="#" class="text-light mr-2"><i class="fa fa-facebook fa-lg"></i></a>
+                    <a href="#" class="text-light mr-2"><i class="fa fa-instagram fa-lg"></i></a>
+                    <a href="#" class="text-light mr-2"><i class="fa fa-twitter fa-lg"></i></a>
+                    <a href="#" class="text-light"><i class="fa fa-youtube fa-lg"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom py-3 border-top border-secondary">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; {% now "Y" %} CarZone. All Rights Reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-right">
+                    <img src="{% static 'img/payment-methods.png' %}" alt="Payment Methods" height="30">
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

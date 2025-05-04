@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Carousel -->
+    <section class="mb-5">
+        <h2 class="display-5 mb-4 text-center">Featured Vehicles</h2>
+        <div id="featuredCars" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#featuredCars" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#featuredCars" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#featuredCars" data-bs-slide-to="2"></button>
+            </div>
+            
+            <div class="carousel-inner rounded-3 shadow-lg">
+                <div class="carousel-item active">
+                    <img src="{% static 'img/la.jpg' %}" class="d-block w-100" alt="Premium Sedan" style="height: 500px; object-fit: cover;">
+                    <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-75 rounded-3 p-4">
+                        <h3 class="h2">Premium Sedan Collection</h3>
+                        <p class="lead">Experience luxury redefined</p>
+                        <a href="#inventory" class="btn btn-primary btn-lg mt-2">View Inventory</a>
+                    </div>
+                </div>
+                
+                <div class="carousel-item">
+                    <img src="{% static 'img/chicago.jpg' %}" class="d-block w-100" alt="SUV Models" style="height: 500px; object-fit: cover;">
+                    <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-75 rounded-3 p-4">
+                        <h3 class="h2">SUV Specials</h3>
+                        <p class="lead">Conquer any terrain in style</p>
+                        <a href="#inventory" class="btn btn-primary btn-lg mt-2">Explore SUVs</a>
+                    </div>
+                </div>
+                
+                <div class="carousel-item">
+                    <img src="{% static 'img/ny.jpg' %}" class="d-block w-100" alt="Electric Vehicles" style="height: 500px; object-fit: cover;">
+                    <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-75 rounded-3 p-4">
+                        <h3 class="h2">Electric Vehicles</h3>
+                        <p class="lead">Sustainable driving for the future</p>
+                        <a href="#inventory" class="btn btn-primary btn-lg mt-2">Discover EVs</a>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="carousel-control-prev" type="button" data-bs-target="#featuredCars" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon bg-dark rounded-circle p-3"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#featuredCars" data-bs-slide="next">
+                <span class="carousel-control-next-icon bg-dark rounded-circle p-3"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Vehicle Inventory -->
+    <section id="inventory" class="mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="display-5">Our Inventory</h2>
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown">
+                    Sort By
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="?sort=price_asc">Price: Low to High</a></li>
+                    <li><a class="dropdown-item" href="?sort=price_desc">Price: High to Low</a></li>
+                    <li><a class="dropdown-item" href="?sort=year_desc">Newest First</a></li>
+                    <li><a class="dropdown-item" href="?sort=mileage_asc">Lowest Mileage</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for item in car_list %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    {% if item.car.discount_price %}
+                    <span class="badge bg-danger position-absolute top-0 end-0 m-2">
+                        Sale
+                    </span>
+                    {% endif %}
+                    
+                    <img src="{{ item.car.image.url|default:'/static/img/car-placeholder.jpg' }}" 
+                         class="card-img-top" 
+                         alt="{{ item.car.name }}"
+                         style="height: 200px; object-fit: cover;">
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.car.name }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ item.car.manufacturer }}</h6>
+                        
+                        <div class="my-3">
+                            {% if item.car_rating %}
+                                {% with stars=item.car_rating|floatformat:0 %}
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= stars %}
+                                            <i class="fas fa-star text-warning"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <small class="text-muted">({{ item.number_of_reviews }} reviews)</small>
+                                {% endwith %}
+                            {% else %}
+                                <span class="text-muted">No reviews yet</span>
+                            {% endif %}
+                        </div>
+                        
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="text-muted">Year</span>
+                                <span>{{ item.car.manufacture_date|date:"Y" }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="text-muted">Mileage</span>
+                                <span>{{ item.car.mileage }} mi</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="text-muted">Price</span>
+                                <span class="fw-bold">
+                                    {% if item.car.discount_price %}
+                                        <span class="text-danger">${{ item.car.discount_price }}</span>
+                                        <small class="text-decoration-line-through text-muted ms-2">${{ item.car.price }}</small>
+                                    {% else %}
+                                        ${{ item.car.price }}
+                                    {% endif %}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card-footer bg-white">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'car_detail' item.car.pk %}" class="btn btn-primary">
+                                <i class="fas fa-eye me-2"></i>View Details
+                            </a>
+                            {% if item.car_rating is null %}
+                            <a href="{% url 'car_detail' item.car.pk %}#reviews" class="btn btn-outline-secondary">
+                                Be the first to review
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info text-center py-5">
+                    <h4 class="alert-heading">No Vehicles Available</h4>
+                    <p>Please check back later or contact our sales team.</p>
+                    <a href="{% url 'contact' %}" class="btn btn-outline-primary mt-2">
+                        Contact Us
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,43 +1,315 @@
-{% extends 'store_templates/bass.html' %}
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}{{ car.name }} | Details {% endblock %}
+
 {% block content %}
-<br>
-      <h3>Car Details</h3>
-      <hr>
-      <span class="text-info">Name: </span> <span>{{ car.name }}</span>
-      <br>
-      <span class="text-info">Manufacturer: </span><span>{{ car.manufacturer }}</span>
-      <br>
-      <span class="text-info">Manufacture Date: </span><span>{{ car.manufacture_date }}</span>
-      <br>
-      <span class="text-info">Price: KES. </span><span>{{ car.price }}</span>
-      <br>
-      <span class="text-info">Mileage: </span><span>{{ car.mileage }}</span>
-      <br>
-      <div class="bg-light"><img class="img-fluid mx-auto d-block" width="200px" alt="Responsive image"
-                  src="{{ car.image.url }}"> </div>
-      {% if not reviews %}
-            <hr>
-            <h3>No reviews? Write the first.</h3>
-      {% else %}
-            <span class="text-info">Overall Rating: </span><span class="badge badge-primary badge-pill">{{ car_rating }}</span>
-            <br>
-            <hr>
-            <h3>Review Comments</h3>
-            <ul>
-            {% for review in reviews %}
-                  <li class="list-group-item">
-                        <span class="text-info">Review comment: </span> <span>{{ review.content }}</span>
-                        <br>
-                        <span class="text-info">Created on: </span><span>{{ review.date_created }}</span>
-                        <br>
-                        <span class="text-info">Modified on: </span><span>{{ review.date_edited }}</span>
-                        <br>
-                        <span class="text-info">Rating: </span><span class="badge badge-secondary badge-pill">{{ review.rating }}</span>
-                        <br>
-                        <span class="text-info">Creator: </span><span>{{ review.creator.username }}</span>
-                        <br>
-                  </li>
-            {% endfor %}
+<div class="row">
+  <!-- Car Image Gallery -->
+  <div class="col-md-6 mb-4">
+    <div class="card border-0 shadow-sm">
+      <div class="car-image-gallery">
+        <img class="img-fluid rounded" alt="{{ car.name }}" src="{{ car.image.url }}">
+      </div>
+      <div class="card-body p-3">
+        <div class="row mt-2">
+          <div class="col-3">
+            <img class="img-fluid rounded thumbnail" alt="{{ car.name }}" src="{{ car.image.url }}">
+          </div>
+          <!-- Additional thumbnails would go here -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Car Details -->
+  <div class="col-md-6">
+    <h1 class="display-5 mb-2">{{ car.name }}</h1>
+    <div class="d-flex align-items-center mb-3">
+      <div class="rating-stars mr-2">
+        {% for i in "12345" %}
+          {% if forloop.counter <= car_rating|default:0 %}
+            <i class="fa fa-star text-warning"></i>
+          {% else %}
+            <i class="fa fa-star-o text-muted"></i>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <span class="text-muted">{{ reviews|length }} review{{ reviews|length|pluralize }}</span>
+    </div>
+    
+    <h2 class="price-tag mb-4">KES {{ car.price|floatformat:2|intcomma }}</h2>
+    
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Car Specifications</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6 mb-2">
+            <div class="spec-item">
+              <i class="fa fa-car text-primary mr-2"></i>
+              <span class="spec-label">Manufacturer:</span>
+              <span class="spec-value">{{ car.manufacturer }}</span>
+            </div>
+          </div>
+          <div class="col-md-6 mb-2">
+            <div class="spec-item">
+              <i class="fa fa-calendar text-primary mr-2"></i>
+              <span class="spec-label">Manufacture Date:</span>
+              <span class="spec-value">{{ car.manufacture_date }}</span>
+            </div>
+          </div>
+          <div class="col-md-6 mb-2">
+            <div class="spec-item">
+              <i class="fa fa-tachometer text-primary mr-2"></i>
+              <span class="spec-label">Mileage:</span>
+              <span class="spec-value">{{ car.mileage }} km</span>
+            </div>
+          </div>
+          <!-- Additional specs would go here -->
+        </div>
+      </div>
+    </div>
+    
+    <div class="d-flex mb-4">
+      <button class="btn btn-primary btn-lg mr-2 flex-grow-1">
+        <i class="fa fa-shopping-cart mr-2"></i> Add to Cart
+      </button>
+      <button class="btn btn-outline-secondary btn-lg">
+        <i class="fa fa-heart"></i>
+      </button>
+    </div>
+    
+    <div class="alert alert-info">
+      <i class="fa fa-info-circle mr-2"></i> This car is available for immediate purchase. Contact us for financing options.
+    </div>
+  </div>
+</div>
+
+<!-- Tabbed Content -->
+<div class="card shadow-sm mt-4 mb-5">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs" id="carDetailsTabs" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="description-tab" data-toggle="tab" href="#description" role="tab">Description</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="reviews-tab" data-toggle="tab" href="#reviews" role="tab">Reviews ({{ reviews|length }})</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="shipping-tab" data-toggle="tab" href="#shipping" role="tab">Shipping & Returns</a>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body">
+    <div class="tab-content" id="carDetailsContent">
+      <!-- Description Tab -->
+      <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+        <h4>About {{ car.name }}</h4>
+        <p>{{ car.description|default:"No description available for this vehicle. Please contact us for more information." }}</p>
+        
+        <h5 class="mt-4">Features:</h5>
+        <div class="row">
+          <div class="col-md-6">
+            <ul class="feature-list">
+              <li><i class="fa fa-check-circle text-success mr-2"></i> Feature 1</li>
+              <li><i class="fa fa-check-circle text-success mr-2"></i> Feature 2</li>
+              <li><i class="fa fa-check-circle text-success mr-2"></i> Feature 3</li>
             </ul>
-      {% endif %}
+          </div>
+          <div class="col-md-6">
+            <ul class="feature-list">
+              <li><i class="fa fa-check-circle text-success mr-2"></i> Feature 4</li>
+              <li><i class="fa fa-check-circle text-success mr-2"></i> Feature 5</li>
+              <li><i class="fa fa-check-circle text-success mr-2"></i> Feature 6</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Reviews Tab -->
+      <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+        <div class="reviews-container">
+          {% if not reviews %}
+          <div class="text-center py-5">
+            <i class="fa fa-comments-o fa-4x text-muted mb-3"></i>
+            <h4>No reviews yet</h4>
+            <p class="text-muted">Be the first to review this car</p>
+            <button class="btn btn-primary mt-2" data-toggle="modal" data-target="#reviewModal">
+              <i class="fa fa-pencil mr-2"></i> Write a Review
+            </button>
+          </div>
+          {% else %}
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4>Customer Reviews</h4>
+            <button class="btn btn-outline-primary" data-toggle="modal" data-target="#reviewModal">
+              <i class="fa fa-pencil mr-2"></i> Write a Review
+            </button>
+          </div>
+          
+          <div class="reviews-summary mb-4">
+            <div class="row align-items-center">
+              <div class="col-md-3 text-center">
+                <div class="display-4">{{ car_rating }}</div>
+                <div class="rating-stars">
+                  {% for i in "12345" %}
+                    {% if forloop.counter <= car_rating|default:0 %}
+                      <i class="fa fa-star text-warning"></i>
+                    {% else %}
+                      <i class="fa fa-star-o text-muted"></i>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+                <div class="text-muted">Based on {{ reviews|length }} review{{ reviews|length|pluralize }}</div>
+              </div>
+              <div class="col-md-9">
+                <!-- Rating distribution bars would go here -->
+                <div class="rating-bars">
+                  <div class="rating-bar-item">
+                    <div class="d-flex align-items-center">
+                      <div class="rating-label mr-2">5 <i class="fa fa-star text-warning"></i></div>
+                      <div class="progress flex-grow-1">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
+                      </div>
+                      <div class="rating-count ml-2">75%</div>
+                    </div>
+                  </div>
+                  <!-- More rating bars would go here -->
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="reviews-list">
+            {% for review in reviews %}
+            <div class="review-item card mb-3">
+              <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                  <div class="review-user">
+                    <h5 class="mb-0">{{ review.creator.username }}</h5>
+                    <div class="rating-stars">
+                      {% for i in "12345" %}
+                        {% if forloop.counter <= review.rating %}
+                          <i class="fa fa-star text-warning"></i>
+                        {% else %}
+                          <i class="fa fa-star-o text-muted"></i>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div class="review-date">
+                    <small class="text-muted">{{ review.date_created|date:"F d, Y" }}</small>
+                  </div>
+                </div>
+                <p class="review-content mb-1">{{ review.content }}</p>
+                <small class="text-muted">Last updated: {{ review.date_edited|date:"F d, Y" }}</small>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      
+      <!-- Shipping Tab -->
+      <div class="tab-pane fade" id="shipping" role="tabpanel" aria-labelledby="shipping-tab">
+        <h4>Shipping Information</h4>
+        <p>We offer nationwide delivery services for all our vehicles.</p>
+        
+        <h5 class="mt-4">Delivery Options:</h5>
+        <ul>
+          <li>Standard delivery (3-5 business days)</li>
+          <li>Express delivery (1-2 business days)</li>
+          <li>In-store pickup (Same day)</li>
+        </ul>
+        
+        <h5 class="mt-4">Return Policy:</h5>
+        <p>We offer a 7-day test drive period. If you're not completely satisfied with your purchase, you can return the vehicle within 7 days for a full refund, minus shipping costs.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Related Cars Section -->
+<div class="related-cars mb-5">
+  <h3 class="section-title mb-4">You May Also Like</h3>
+  <div class="row">
+    <!-- Related car cards would go here -->
+    <div class="col-md-3">
+      <div class="product-card">
+        <div class="product-image">
+          <img src="/static/img/no_image.png" alt="Related Car" class="img-fluid">
+          <div class="product-action">
+            <a href="#"><i class="fa fa-shopping-cart"></i></a>
+            <a href="#"><i class="fa fa-heart"></i></a>
+            <a href="#"><i class="fa fa-search"></i></a> 
+          </div>
+        </div>
+        <div class="product-info">
+          <h5 class="product-title">Toyota Camry</h5>
+          <p class="product-price">KES 2,500,000</p>
+        </div>
+      </div>
+    </div>
+    <!-- More related cars would go here -->
+  </div>
+</div>
+
+<!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="reviewModalLabel">Write a Review</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+            {% csrf_token %}
+          <div class="form-group">
+            <label for="reviewRating">Rating</label>
+            <div class="rating-input">
+              <i class="fa fa-star-o rating-star" data-rating="1"></i>
+              <i class="fa fa-star-o rating-star" data-rating="2"></i>
+              <i class="fa fa-star-o rating-star" data-rating="3"></i>
+              <i class="fa fa-star-o rating-star" data-rating="4"></i>
+              <i class="fa fa-star-o rating-star" data-rating="5"></i>
+              <input type="hidden" name="rating" id="reviewRating" value="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="reviewContent">Your Review</label>
+            <textarea class="form-control" id="reviewContent" name="content" rows="5" placeholder="Share your experience with this car..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary">Submit Review</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+<script>
+  $(document).ready(function() {
+    // Initialize rating stars in the review modal
+    $('.rating-star').click(function() {
+      var selectedRating = $(this).data('rating');
+      $('#reviewRating').val(selectedRating);
+      
+      $('.rating-star').each(function() {
+        if ($(this).data('rating') <= selectedRating) {
+          $(this).removeClass('fa-star-o').addClass('fa-star text-warning');
+        } else {
+          $(this).removeClass('fa-star text-warning').addClass('fa-star-o');
+        }
+      });
+    });
+  });
+</script>
 {% endblock %}
+{% endblock content %}
